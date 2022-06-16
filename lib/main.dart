@@ -1,7 +1,8 @@
+import 'dart:convert';
 import 'dart:math';
 
 import 'package:flutter/material.dart';
-
+import 'package:http/http.dart' as http;
 void main() {
   runApp(MyApp());
 }
@@ -22,7 +23,7 @@ class MyApp extends StatelessWidget {
         ),
         body: Center(
           // child: Text(word),
-          child: RandomWords(),
+          child: HttpReq(),
         ),
       ),
     );
@@ -35,6 +36,112 @@ class SearchBar extends StatelessWidget {
   Widget build(BuildContext context) {
     return  Center(
       child: Text('Search Here'),
+    );
+  }
+}
+
+class HttpReq extends StatefulWidget {
+  const HttpReq({Key? key}) : super(key: key);
+
+  @override
+  _HttpReqState createState() => _HttpReqState();
+}
+
+class _HttpReqState extends State<HttpReq> {
+
+  late Future<List<Track>> futureTracks;
+
+  getTracks(Map<String, dynamic> json) {
+    List<Track> tracks = [];
+    for(var i=0; i<json['resultCount']; i++){
+      tracks.add(Track.fromJson(json['results'][i]));
+      print(i);
+      print(json['resultCount']);
+      print(tracks[i].trackName);
+    }
+    return tracks;
+  }
+
+  Future<List<Track>> fetchTracks() async {
+    final response = await http
+        .get(Uri.parse('https://itunes.apple.com/search?term=jack+johnson&entity=musicVideo'));
+
+    if (response.statusCode == 200) {
+      // If the server did return a 200 OK response,
+      // then parse the JSON.
+      // return Album.fromJson(jsonDecode(response.body));
+      return getTracks(jsonDecode(response.body));
+    } else {
+      // If the server did not return a 200 OK response,
+      // then throw an exception.
+      throw Exception('Failed to load music');
+    }
+  }
+
+  @override
+  void initState(){
+    super.initState();
+    futureTracks = fetchTracks();
+  }
+  Widget build(BuildContext context) {
+    return FutureBuilder<List<Track>>(
+      future: futureTracks,
+      builder: (context, snapshot) {
+        if (snapshot.hasData) {
+          List<Track> tracks = snapshot.data ?? [];
+          // return Text(tereks[0].artistName);
+          return ListView.builder(
+              itemCount: tracks.length,
+              itemBuilder: (context, index) {
+                Track track = tracks[index];
+                return new ListTile(
+                  leading: CircleAvatar(
+                    backgroundImage: AssetImage(track.smallArtwork),
+                  ),
+                  // trailing: track.artistName,
+                  title: new Text(track.trackName),
+                  // onTap: () {
+                  //   Navigator.push(context,
+                  //       new MaterialPageRoute(builder: (context) => new Home()));
+                  // },
+                );
+              });
+        } else if (snapshot.hasError) {
+          return Text('${snapshot.error}');
+        }
+
+        // By default, show a loading spinner.
+        return const CircularProgressIndicator();
+      },
+    );
+  }
+}
+
+class Track {
+  final int trackId;
+  final String artistName;
+  // final String collectionName;
+  final String trackName;
+  final String smallArtwork;
+  final String trackURL;
+
+  const Track({
+    required this.trackId,
+    required this.artistName,
+    // required this.collectionName,
+    required this.trackName,
+    required this.smallArtwork,
+    required this.trackURL,
+  });
+
+  factory Track.fromJson(Map<String, dynamic> json) {
+    return Track(
+      trackId: json['trackId'],
+      artistName: json['artistName'],
+      // collectionName: (json['collectionName']==null) ? json['collectionName']:'None',
+      trackName: json['trackName'],
+      smallArtwork: json['artworkUrl30'],
+      trackURL: json['trackViewUrl'],
     );
   }
 }
