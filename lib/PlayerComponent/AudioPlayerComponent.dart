@@ -1,72 +1,24 @@
+import 'package:apple_player/PlayerComponent/PlayerManager.dart';
 import 'package:audio_video_progress_bar/audio_video_progress_bar.dart';
 import 'package:flutter/material.dart';
-import 'package:just_audio/just_audio.dart';
 
-class PageManager {
-  static const url = 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3';
-  late AudioPlayer _audioPlayer;
-
-  PageManager() {
-    _init();
-  }
-
-  void play() {
-    _audioPlayer.play();
-  }
-  void pause() {
-    _audioPlayer.pause();
-  }
-
-  void dispose() {
-    _audioPlayer.dispose();
-  }
-  void _init() async {
-    _audioPlayer = AudioPlayer();
-    await _audioPlayer.setUrl(url);
-  }
-
-  final progressNotifier = ValueNotifier<ProgressBarState>(
-    ProgressBarState(
-      current: Duration.zero,
-      buffered: Duration.zero,
-      total: Duration.zero,
-    ),
-  );
-  final buttonNotifier = ValueNotifier<ButtonState>(ButtonState.paused);
-}
-
-class ProgressBarState {
-  ProgressBarState({
-    required this.current,
-    required this.buffered,
-    required this.total,
-  });
-  final Duration current;
-  final Duration buffered;
-  final Duration total;
-}
-
-enum ButtonState {
-  paused, playing, loading
-}
-
-class AudioPlayerSample extends StatefulWidget {
-  const AudioPlayerSample({Key? key}) : super(key: key);
+class AudioPlayerComponent extends StatefulWidget {
+  const AudioPlayerComponent({Key? key}) : super(key: key);
 
   @override
-  _AudioPlayerSampleState createState() => _AudioPlayerSampleState();
+  _AudioPlayerComponentState createState() => _AudioPlayerComponentState();
 }
 
-class _AudioPlayerSampleState extends State<AudioPlayerSample> {
-  late final PageManager _pageManager;
+class _AudioPlayerComponentState extends State<AudioPlayerComponent> {
+  late final PlayerManager _playerManager;
 
   @override
   void initState() {
     super.initState();
-    _pageManager = PageManager();
+    _playerManager = PlayerManager();
   }
   void dispose() {
-    _pageManager.dispose();
+    _playerManager.dispose();
     super.dispose();
   }
 
@@ -80,17 +32,18 @@ class _AudioPlayerSampleState extends State<AudioPlayerSample> {
             children: [
               const Spacer(),
               ValueListenableBuilder<ProgressBarState>(
-                valueListenable: _pageManager.progressNotifier,
+                valueListenable: _playerManager.progressNotifier,
                 builder: (_, value, __) {
                   return ProgressBar(
                     progress: value.current,
                     buffered: value.buffered,
                     total: value.total,
+                    onSeek: _playerManager.seek,
                   );
                 },
               ),
               ValueListenableBuilder<ButtonState>(
-                valueListenable: _pageManager.buttonNotifier,
+                valueListenable: _playerManager.buttonNotifier,
                 builder: (_, value, __) {
                   switch (value) {
                     case ButtonState.loading:
@@ -105,14 +58,16 @@ class _AudioPlayerSampleState extends State<AudioPlayerSample> {
                         icon: const Icon(Icons.play_arrow),
                         iconSize: 32.0,
                         onPressed: () {
-                          _pageManager.play();
+                          _playerManager.play();
                         },
                       );
                     case ButtonState.playing:
                       return IconButton(
                         icon: const Icon(Icons.pause),
                         iconSize: 32.0,
-                        onPressed: () {},
+                        onPressed: () {
+                          _playerManager.pause();
+                        },
                       );
                   }
                 },
