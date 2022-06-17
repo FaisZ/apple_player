@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:math';
 
+import 'package:apple_player/AudioPlayerSample.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 void main() {
@@ -23,7 +24,8 @@ class MyApp extends StatelessWidget {
         ),
         body: Center(
           // child: Text(word),
-          child: HttpReq(),
+          // child: HttpReq(),
+          child: AudioPlayerSample()
         ),
       ),
     );
@@ -116,6 +118,8 @@ class _HttpReqState extends State<HttpReq> {
     );
   }
 }
+
+
 
 class Track {
   final int trackId;
