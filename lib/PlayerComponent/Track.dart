@@ -24,7 +24,7 @@ class Track {
       artistName: json['artistName'] ?? '',
       collectionName: (json['collectionName']) ?? '',
       trackName: json['trackName'] ?? '',
-      smallArtwork: json['artworkUrl30'] ?? '',
+      smallArtwork: json['artworkUrl60'] ?? '',
       trackURL: json['previewUrl'] ?? '',
     );
   }
