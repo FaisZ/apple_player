@@ -98,8 +98,16 @@ class _TrackListState extends State<TrackList> {
           itemBuilder: (context, index) {
             Track track = tracks[index];
             return new ListTile(
-              leading: CircleAvatar(
-                backgroundImage: AssetImage(track.smallArtwork),
+              // leading: CircleAvatar(
+              //   backgroundImage: AssetImage(track.smallArtwork),
+              // ),
+              leading: Container(
+                height: 50.0,
+                width: 50.0,
+                decoration: BoxDecoration(
+                  image: DecorationImage(image: NetworkImage(track.smallArtwork)),
+                  shape: BoxShape.rectangle,
+                ),
               ),
               title: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -107,14 +115,24 @@ class _TrackListState extends State<TrackList> {
                   Text(
                     track.trackName,
                     overflow: TextOverflow.ellipsis,
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 16
+                    ),
                   ),
                   Text(
                     track.artistName,
                     overflow: TextOverflow.ellipsis,
+                    style: TextStyle(
+                      fontSize: 16
+                    ),
                   ),
                   Text(
                     track.collectionName,
                     overflow: TextOverflow.ellipsis,
+                    style: TextStyle(
+                      fontSize: 14
+                    ),
                   ),
                 ],
               ),
