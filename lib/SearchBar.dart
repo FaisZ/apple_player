@@ -33,7 +33,6 @@ class _SearchBarState extends State<SearchBar> {
           border: InputBorder.none
         ),
         onChanged: (val){
-          val = val.replaceAll(RegExp(' '), '+');
           widget.searchTrackByArtist(val);
         },
       ),

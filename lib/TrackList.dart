@@ -16,26 +16,38 @@ class _TrackListState extends State<TrackList> {
 
   late Future<List<Track>> futureTracks;
 
-  getTracks(Map<String, dynamic> json) {
+  isArtistMatchFilter(trackArtistName, searchedArtistName) {
+
+    trackArtistName.toString().toLowerCase();
+    searchedArtistName.toString().toLowerCase();
+    print(trackArtistName);
+    print(searchedArtistName);
+    if(trackArtistName.toString().toLowerCase().contains(searchedArtistName.toString().toLowerCase()))
+      return true;
+    else return false;
+  }
+
+  getTracks(Map<String, dynamic> json, searchString) {
     List<Track> tracks = [];
     for(var i=0; i<json['resultCount']; i++){
-      tracks.add(Track.fromJson(json['results'][i]));
-      print(i);
-      print(json['resultCount']);
-      print(tracks[i].trackName);
+      if(isArtistMatchFilter(json['results'][i]['artistName'], searchString))
+        tracks.add(Track.fromJson(json['results'][i]));
     }
     return tracks;
   }
 
   Future<List<Track>> fetchTracks(searchString) async {
+
+    //replace spaces with '+' to enable multi word searches
+    var filteredSearchString = searchString.replaceAll(RegExp(' '), '+');
     final response = await http
-        .get(Uri.parse('https://itunes.apple.com/search?term='+searchString+'&entity=musicVideo'));
+        .get(Uri.parse('https://itunes.apple.com/search?term='+filteredSearchString+'&entity=musicVideo'));
 
     if (response.statusCode == 200) {
       // If the server did return a 200 OK response,
       // then parse the JSON.
       // return Album.fromJson(jsonDecode(response.body));
-      return getTracks(jsonDecode(response.body));
+      return getTracks(jsonDecode(response.body),searchString);
     } else {
       // If the server did not return a 200 OK response,
       // then throw an exception.
@@ -64,7 +76,8 @@ class _TrackListState extends State<TrackList> {
           builder: (context, snapshot) {
             if (snapshot.hasData) {
               List<Track> tracks = snapshot.data ?? [];
-              return Expanded(
+              if(tracks.length>0)
+                return Expanded(
                 child: ListView.builder(
                     itemCount: tracks.length,
                     itemBuilder: (context, index) {
@@ -91,12 +104,13 @@ class _TrackListState extends State<TrackList> {
                       );
                     }),
               );
+              else
+                return Text('Artist not found');
             } else if (snapshot.hasError) {
               return Text('${snapshot.error}');
             }
-
-            // By default, show a loading spinner.
-            return const CircularProgressIndicator();
+            else
+              return const CircularProgressIndicator();
           },
         ),
       ],
