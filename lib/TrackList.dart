@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:apple_player/PlayerComponent/AudioPlayerComponent.dart';
 import 'package:apple_player/PlayerComponent/Track.dart';
+import 'package:apple_player/SearchBar.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
@@ -26,9 +27,9 @@ class _TrackListState extends State<TrackList> {
     return tracks;
   }
 
-  Future<List<Track>> fetchTracks() async {
+  Future<List<Track>> fetchTracks(searchString) async {
     final response = await http
-        .get(Uri.parse('https://itunes.apple.com/search?term=jack+johnson&entity=musicVideo'));
+        .get(Uri.parse('https://itunes.apple.com/search?term='+searchString+'&entity=musicVideo'));
 
     if (response.statusCode == 200) {
       // If the server did return a 200 OK response,
@@ -42,50 +43,63 @@ class _TrackListState extends State<TrackList> {
     }
   }
 
+  testFunction (val) {
+    print(val);
+    setState(() {
+      futureTracks = fetchTracks(val);
+    });
+  }
+
   @override
   void initState(){
     super.initState();
-    futureTracks = fetchTracks();
+    futureTracks = fetchTracks('');
   }
   Widget build(BuildContext context) {
-    return FutureBuilder<List<Track>>(
-      future: futureTracks,
-      builder: (context, snapshot) {
-        if (snapshot.hasData) {
-          List<Track> tracks = snapshot.data ?? [];
-          // return Text(tereks[0].artistName);
-          return ListView.builder(
-              itemCount: tracks.length,
-              itemBuilder: (context, index) {
-                Track track = tracks[index];
-                return new ListTile(
-                  leading: CircleAvatar(
-                    backgroundImage: AssetImage(track.smallArtwork),
-                  ),
-                  // trailing: Text (track.artistName),
-                  // title: Text(track.trackName),
-                  title: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(track.trackName, overflow: TextOverflow.ellipsis,),
-                      Text(track.artistName, overflow: TextOverflow.ellipsis,),
-                      Text(track.collectionName, overflow: TextOverflow.ellipsis,),
-                    ],
-                  ),
-                  onTap: () {
-                    openPlayer(track.trackName,track.trackURL);
-                    // Navigator.push(context,
-                    //     new MaterialPageRoute(builder: (context) => new Home()));
-                  },
-                );
-              });
-        } else if (snapshot.hasError) {
-          return Text('${snapshot.error}');
-        }
+    return Column(
+      children: [
+        SearchBar(searchTrackByArtist: testFunction,),
+        FutureBuilder<List<Track>>(
+          future: futureTracks,
+          builder: (context, snapshot) {
+            if (snapshot.hasData) {
+              List<Track> tracks = snapshot.data ?? [];
+              return Expanded(
+                child: ListView.builder(
+                    itemCount: tracks.length,
+                    itemBuilder: (context, index) {
+                      Track track = tracks[index];
+                      return new ListTile(
+                        leading: CircleAvatar(
+                          backgroundImage: AssetImage(track.smallArtwork),
+                        ),
+                        // trailing: Text (track.artistName),
+                        // title: Text(track.trackName),
+                        title: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(track.trackName, overflow: TextOverflow.ellipsis,),
+                            Text(track.artistName, overflow: TextOverflow.ellipsis,),
+                            Text(track.collectionName, overflow: TextOverflow.ellipsis,),
+                          ],
+                        ),
+                        onTap: () {
+                          openPlayer(track.trackName,track.trackURL);
+                          // Navigator.push(context,
+                          //     new MaterialPageRoute(builder: (context) => new Home()));
+                        },
+                      );
+                    }),
+              );
+            } else if (snapshot.hasError) {
+              return Text('${snapshot.error}');
+            }
 
-        // By default, show a loading spinner.
-        return const CircularProgressIndicator();
-      },
+            // By default, show a loading spinner.
+            return const CircularProgressIndicator();
+          },
+        ),
+      ],
     );
   }
 

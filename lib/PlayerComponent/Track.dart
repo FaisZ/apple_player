@@ -16,17 +16,14 @@ class Track {
   });
 
   factory Track.fromJson(Map<String, dynamic> json) {
-    // String album = json['collectionName'];
-    //   album='unknown';
 
     return Track(
-      trackId: json['trackId'],
-      artistName: json['artistName'],
+      trackId: json['trackId'] ?? '',
+      artistName: json['artistName'] ?? '',
       collectionName: (json['collectionName']) ?? '',
-      // collectionName: album,
-      trackName: json['trackName'],
-      smallArtwork: json['artworkUrl30'],
-      trackURL: json['previewUrl'],
+      trackName: json['trackName'] ?? '',
+      smallArtwork: json['artworkUrl30'] ?? '',
+      trackURL: json['previewUrl'] ?? '',
     );
   }
 }
