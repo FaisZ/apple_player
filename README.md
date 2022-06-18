@@ -6,6 +6,7 @@ The app uses API from https://developer.apple.com/library/archive/documentation/
 
 Supported Devices
 - Tested on Nexus 5X API 33 Android Emulator
+- Tested on Samsung S21
 
 Features
 - Search tracks based on artist
