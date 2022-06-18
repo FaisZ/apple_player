@@ -14,7 +14,9 @@ class TrackList extends StatefulWidget {
 
 class _TrackListState extends State<TrackList> {
   late Future<List<Track>> futureTracks;
+  var selectedTrack;
 
+  //to only filter artist from search string
   isArtistMatchFilter(trackArtistName, searchedArtistName) {
     trackArtistName.toString().toLowerCase();
     searchedArtistName.toString().toLowerCase();
@@ -28,6 +30,7 @@ class _TrackListState extends State<TrackList> {
 
   getTracks(Map<String, dynamic> json, searchString) {
     List<Track> tracks = [];
+    //get individual track in a list from the resultant json
     for (var i = 0; i < json['resultCount']; i++) {
       if (isArtistMatchFilter(json['results'][i]['artistName'], searchString)) tracks.add(Track.fromJson(json['results'][i]));
     }
@@ -42,7 +45,6 @@ class _TrackListState extends State<TrackList> {
     if (response.statusCode == 200) {
       // If the server did return a 200 OK response,
       // then parse the JSON.
-      // return Album.fromJson(jsonDecode(response.body));
       return getTracks(jsonDecode(response.body), searchString);
     } else {
       // If the server did not return a 200 OK response,
@@ -51,24 +53,29 @@ class _TrackListState extends State<TrackList> {
     }
   }
 
-  testFunction(val) {
-    print(val);
+  searchTrackByArtist(val) {
     setState(() {
       futureTracks = fetchTracks(val);
     });
   }
 
+  selectTrack(selectedIndex){
+    setState(() {
+      selectedTrack = selectedIndex;
+    });
+  }
   @override
   void initState() {
     super.initState();
     futureTracks = fetchTracks('');
+    selectedTrack = -1;
   }
 
   Widget build(BuildContext context) {
     return Column(
       children: [
         SearchBar(
-          searchTrackByArtist: testFunction,
+          searchTrackByArtist: searchTrackByArtist,
         ),
         FutureBuilder<List<Track>>(
           future: futureTracks,
@@ -77,7 +84,7 @@ class _TrackListState extends State<TrackList> {
               //transform snapshot data into list of tracks, or empty array
               List<Track> tracks = snapshot.data ?? [];
               if (tracks.length > 0)
-                return ExpandedTrackListView(tracks);
+                return ExpandedTrackListView(tracks, selectTrack);
               //if no tracks found
               else
                 return Text('Artist not found');
@@ -91,7 +98,8 @@ class _TrackListState extends State<TrackList> {
     );
   }
 
-  Expanded ExpandedTrackListView(List<Track> tracks) {
+  Expanded ExpandedTrackListView(List<Track> tracks, selectTrackFunction) {
+
     return Expanded(
       child: ListView.builder(
           itemCount: tracks.length,
@@ -136,8 +144,10 @@ class _TrackListState extends State<TrackList> {
                   ),
                 ],
               ),
+              trailing: (selectedTrack == index) ? const Icon(Icons.audiotrack) : null,
               onTap: () {
                 openPlayer(track.trackName, track.trackURL);
+                selectTrackFunction(index);
               },
             );
           }),
