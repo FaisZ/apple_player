@@ -22,7 +22,8 @@ Instructions to build and deploy
 - run flutter build apk in terminal
 - find the apk in build\app\outputs\flutter-apk\app-release.apk
 
-Installation note
+Installation note:
+
 The app's developer is not registered in Google Play, therefore warnings on installation will be given.
 Enable installation from unknown sources to enable installing APKs not from Google Play Store.
  
