@@ -6,7 +6,9 @@ class AudioPlayerComponent extends StatefulWidget {
 
   final String trackName;
   final String trackUrl;
-  const AudioPlayerComponent({Key? key, required this.trackName, required this.trackUrl}) : super(key: key);
+  final Function selectTrackFunction;
+  final int trackIndex;
+  const AudioPlayerComponent({Key? key, required this.trackName, required this.trackUrl, required this.selectTrackFunction, required this.trackIndex}) : super(key: key);
 
   @override
   _AudioPlayerComponentState createState() => _AudioPlayerComponentState();
@@ -62,6 +64,8 @@ class _AudioPlayerComponentState extends State<AudioPlayerComponent> {
                     iconSize: 32.0,
                     onPressed: () {
                       _playerManager.play();
+                      //show selected playing song indicator when played
+                      widget.selectTrackFunction(widget.trackIndex);
                     },
                   );
                 case ButtonState.playing:
@@ -70,6 +74,8 @@ class _AudioPlayerComponentState extends State<AudioPlayerComponent> {
                     iconSize: 32.0,
                     onPressed: () {
                       _playerManager.pause();
+                      //hide selected playing song indicator when paused
+                      widget.selectTrackFunction(-1);
                     },
                   );
               }

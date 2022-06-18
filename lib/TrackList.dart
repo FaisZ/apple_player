@@ -106,9 +106,6 @@ class _TrackListState extends State<TrackList> {
           itemBuilder: (context, index) {
             Track track = tracks[index];
             return new ListTile(
-              // leading: CircleAvatar(
-              //   backgroundImage: AssetImage(track.smallArtwork),
-              // ),
               leading: Container(
                 height: 50.0,
                 width: 50.0,
@@ -146,8 +143,7 @@ class _TrackListState extends State<TrackList> {
               ),
               trailing: (selectedTrack == index) ? const Icon(Icons.audiotrack) : null,
               onTap: () {
-                openPlayer(track.trackName, track.trackURL);
-                selectTrackFunction(index);
+                openPlayer(track.trackName, track.trackURL, index, selectTrackFunction);
               },
             );
           }),
@@ -155,7 +151,7 @@ class _TrackListState extends State<TrackList> {
   }
 
   //call player widget on a bottom modal
-  openPlayer(trackName, url) {
+  openPlayer(trackName, url, trackIndex, selectTrackFunction) {
     showBottomSheet<void>(
       context: context,
       builder: (BuildContext context) {
@@ -169,14 +165,19 @@ class _TrackListState extends State<TrackList> {
                     icon: const Icon(Icons.close),
                     iconSize: 20.0,
                     onPressed: () {
+                      //hide selected playing song indicator when player closed
+                      selectTrackFunction(-1);
                       Navigator.of(context).pop();
                     },
                   ),
                 ),
                 Center(
+                  //pass selectTrackFunction and trackIndex to enable playing song indicator based on play/pause state
                   child: AudioPlayerComponent(
                     trackName: trackName,
                     trackUrl: url,
+                    trackIndex: trackIndex,
+                    selectTrackFunction: selectTrackFunction,
                   ),
                 ),
               ],
