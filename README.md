@@ -24,6 +24,6 @@ Instructions to build and deploy
 
 Installation note:
 
-The app's developer is not registered in Google Play, therefore warnings on installation will be given.
+The app is not registered in Google Play, therefore warnings on installation will be given. Please ignore the warnings, the app is safe.
 Enable installation from unknown sources to enable installing APKs not from Google Play Store.
  
