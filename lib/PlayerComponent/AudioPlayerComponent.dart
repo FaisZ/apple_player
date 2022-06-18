@@ -30,7 +30,7 @@ class _AudioPlayerComponentState extends State<AudioPlayerComponent> {
   Widget build(BuildContext context) {
     //audio player consists of track name, track progress bar, and pause/play button
     return Padding(
-      padding: const EdgeInsets.all(20.0),
+      padding: const EdgeInsetsDirectional.only(start: 20, end: 20),
       child: Column(
         children: [
           Text(widget.trackName,overflow: TextOverflow.ellipsis),

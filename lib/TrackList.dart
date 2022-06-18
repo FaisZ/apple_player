@@ -128,16 +128,31 @@ class _TrackListState extends State<TrackList> {
 
   //call player widget on a bottom modal
   openPlayer(trackName, url) {
-    showModalBottomSheet<void>(
+    showBottomSheet<void>(
       context: context,
       builder: (BuildContext context) {
         return Container(
-          height: 150,
-          child: Center(
-              child: AudioPlayerComponent(
-            trackName: trackName,
-            trackUrl: url,
-          )),
+          height: 160,
+            child: Column(
+              children: [
+                Align(
+                  alignment: Alignment.topRight,
+                  child: IconButton(
+                    icon: const Icon(Icons.close),
+                    iconSize: 20.0,
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                  ),
+                ),
+                Center(
+                  child: AudioPlayerComponent(
+                    trackName: trackName,
+                    trackUrl: url,
+                  ),
+                ),
+              ],
+            )
         );
       },
     );
