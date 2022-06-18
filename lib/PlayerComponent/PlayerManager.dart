@@ -3,11 +3,11 @@ import 'package:just_audio/just_audio.dart';
 
 class PlayerManager {
   // static const url = 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3';
-  static const url = 'https://video-ssl.itunes.apple.com/itunes-assets/Video118/v4/be/9a/18/be9a18de-2e1f-4917-6973-ab4035978aa1/mzvf_5776119663544478994.640x352.h264lc.U.p.m4v';
+  // static const url = 'https://video-ssl.itunes.apple.com/itunes-assets/Video118/v4/be/9a/18/be9a18de-2e1f-4917-6973-ab4035978aa1/mzvf_5776119663544478994.640x352.h264lc.U.p.m4v';
   late AudioPlayer _audioPlayer;
 
-  PlayerManager() {
-    _init();
+  PlayerManager(String url) {
+    _init(url);
   }
 
   void play() {
@@ -23,7 +23,7 @@ class PlayerManager {
   void seek(Duration position) {
     _audioPlayer.seek(position);
   }
-  void _init() async {
+  void _init(String url) async {
     _audioPlayer = AudioPlayer();
     await _audioPlayer.setUrl(url);
     _audioPlayer.playerStateStream.listen((playerState) {

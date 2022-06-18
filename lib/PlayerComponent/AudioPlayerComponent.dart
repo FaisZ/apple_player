@@ -3,7 +3,10 @@ import 'package:audio_video_progress_bar/audio_video_progress_bar.dart';
 import 'package:flutter/material.dart';
 
 class AudioPlayerComponent extends StatefulWidget {
-  const AudioPlayerComponent({Key? key}) : super(key: key);
+
+  final String trackName;
+  final String trackUrl;
+  const AudioPlayerComponent({Key? key, required this.trackName, required this.trackUrl}) : super(key: key);
 
   @override
   _AudioPlayerComponentState createState() => _AudioPlayerComponentState();
@@ -15,7 +18,7 @@ class _AudioPlayerComponentState extends State<AudioPlayerComponent> {
   @override
   void initState() {
     super.initState();
-    _playerManager = PlayerManager();
+    _playerManager = PlayerManager(widget.trackUrl);
   }
   void dispose() {
     _playerManager.dispose();
@@ -30,7 +33,7 @@ class _AudioPlayerComponentState extends State<AudioPlayerComponent> {
           padding: const EdgeInsets.all(20.0),
           child: Column(
             children: [
-              const Spacer(),
+              Text(widget.trackName,overflow: TextOverflow.ellipsis),
               ValueListenableBuilder<ProgressBarState>(
                 valueListenable: _playerManager.progressNotifier,
                 builder: (_, value, __) {

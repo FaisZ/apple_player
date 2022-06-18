@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:apple_player/PlayerComponent/AudioPlayerComponent.dart';
 import 'package:apple_player/PlayerComponent/Track.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
@@ -61,12 +62,21 @@ class _TrackListState extends State<TrackList> {
                   leading: CircleAvatar(
                     backgroundImage: AssetImage(track.smallArtwork),
                   ),
-                  // trailing: track.artistName,
-                  title: new Text(track.trackName),
-                  // onTap: () {
-                  //   Navigator.push(context,
-                  //       new MaterialPageRoute(builder: (context) => new Home()));
-                  // },
+                  // trailing: Text (track.artistName),
+                  // title: Text(track.trackName),
+                  title: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(track.trackName, overflow: TextOverflow.ellipsis,),
+                      Text(track.artistName, overflow: TextOverflow.ellipsis,),
+                      Text(track.collectionName, overflow: TextOverflow.ellipsis,),
+                    ],
+                  ),
+                  onTap: () {
+                    openPlayer(track.trackName,track.trackURL);
+                    // Navigator.push(context,
+                    //     new MaterialPageRoute(builder: (context) => new Home()));
+                  },
                 );
               });
         } else if (snapshot.hasError) {
@@ -75,6 +85,20 @@ class _TrackListState extends State<TrackList> {
 
         // By default, show a loading spinner.
         return const CircularProgressIndicator();
+      },
+    );
+  }
+
+  openPlayer(trackName, url){
+    showModalBottomSheet<void>(
+      context: context,
+      builder: (BuildContext context) {
+        return Container(
+          height: 200,
+          child: Center(
+            child:AudioPlayerComponent(trackName: trackName, trackUrl: url,)
+          ),
+        );
       },
     );
   }

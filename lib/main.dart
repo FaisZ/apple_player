@@ -10,15 +10,14 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    String word = 'Haii';
     return MaterialApp(
-      title: 'Flutter Demo',
+      title: 'Apple Music Player',
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
       home: Scaffold(
         appBar: AppBar(
-          title: Text('Welcome to Flutter'),
+          title: Text('Apple Music Player'),
         ),
         body: Center(
           // child: Text(word),
