@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 
 class SearchBar extends StatefulWidget {
 
-  Function searchTrackByArtist;
+  //link to parent widget function to search tracks
+  final Function searchTrackByArtist;
 
   SearchBar({required this.searchTrackByArtist});
   @override
@@ -11,10 +12,8 @@ class SearchBar extends StatefulWidget {
 
 class _SearchBarState extends State<SearchBar> {
 
-  Icon customIcon = const Icon(Icons.search);
-  Widget customSearchBar = const Text('My Personal Journal');
   TextEditingController searchController = TextEditingController();
-  String text = '';
+
   @override
   Widget build(BuildContext context) {
     return  Center(
@@ -25,8 +24,9 @@ class _SearchBarState extends State<SearchBar> {
             suffixIcon: IconButton(
               icon: Icon(Icons.clear),
               onPressed: () {
-                /* Clear the search field */
                 searchController.clear();
+                //also reset search string
+                widget.searchTrackByArtist('');
               },
             ),
           hintText: 'Search...',

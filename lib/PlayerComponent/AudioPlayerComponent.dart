@@ -18,6 +18,7 @@ class _AudioPlayerComponentState extends State<AudioPlayerComponent> {
   @override
   void initState() {
     super.initState();
+    //initialize PlayerManager with the track url to play track's preview
     _playerManager = PlayerManager(widget.trackUrl);
   }
   void dispose() {
@@ -27,57 +28,54 @@ class _AudioPlayerComponentState extends State<AudioPlayerComponent> {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      home: Scaffold(
-        body: Padding(
-          padding: const EdgeInsets.all(20.0),
-          child: Column(
-            children: [
-              Text(widget.trackName,overflow: TextOverflow.ellipsis),
-              ValueListenableBuilder<ProgressBarState>(
-                valueListenable: _playerManager.progressNotifier,
-                builder: (_, value, __) {
-                  return ProgressBar(
-                    progress: value.current,
-                    buffered: value.buffered,
-                    total: value.total,
-                    onSeek: _playerManager.seek,
-                  );
-                },
-              ),
-              ValueListenableBuilder<ButtonState>(
-                valueListenable: _playerManager.buttonNotifier,
-                builder: (_, value, __) {
-                  switch (value) {
-                    case ButtonState.loading:
-                      return Container(
-                        margin: const EdgeInsets.all(8.0),
-                        width: 32.0,
-                        height: 32.0,
-                        child: const CircularProgressIndicator(),
-                      );
-                    case ButtonState.paused:
-                      return IconButton(
-                        icon: const Icon(Icons.play_arrow),
-                        iconSize: 32.0,
-                        onPressed: () {
-                          _playerManager.play();
-                        },
-                      );
-                    case ButtonState.playing:
-                      return IconButton(
-                        icon: const Icon(Icons.pause),
-                        iconSize: 32.0,
-                        onPressed: () {
-                          _playerManager.pause();
-                        },
-                      );
-                  }
-                },
-              ),
-            ],
+    //audio player consists of track name, track progress bar, and pause/play button
+    return Padding(
+      padding: const EdgeInsets.all(20.0),
+      child: Column(
+        children: [
+          Text(widget.trackName,overflow: TextOverflow.ellipsis),
+          ValueListenableBuilder<ProgressBarState>(
+            valueListenable: _playerManager.progressNotifier,
+            builder: (_, value, __) {
+              return ProgressBar(
+                progress: value.current,
+                buffered: value.buffered,
+                total: value.total,
+                onSeek: _playerManager.seek,
+              );
+            },
           ),
-        ),
+          ValueListenableBuilder<ButtonState>(
+            valueListenable: _playerManager.buttonNotifier,
+            builder: (_, value, __) {
+              switch (value) {
+                case ButtonState.loading:
+                  return Container(
+                    margin: const EdgeInsets.all(8.0),
+                    width: 32.0,
+                    height: 32.0,
+                    child: const CircularProgressIndicator(),
+                  );
+                case ButtonState.paused:
+                  return IconButton(
+                    icon: const Icon(Icons.play_arrow),
+                    iconSize: 32.0,
+                    onPressed: () {
+                      _playerManager.play();
+                    },
+                  );
+                case ButtonState.playing:
+                  return IconButton(
+                    icon: const Icon(Icons.pause),
+                    iconSize: 32.0,
+                    onPressed: () {
+                      _playerManager.pause();
+                    },
+                  );
+              }
+            },
+          ),
+        ],
       ),
     );
   }

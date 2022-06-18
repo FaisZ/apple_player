@@ -1,3 +1,4 @@
+//The model class for tracks
 class Track {
   final int trackId;
   final String artistName;
@@ -15,6 +16,7 @@ class Track {
     required this.trackURL,
   });
 
+  //function to translate apple's json return and only extract needed values
   factory Track.fromJson(Map<String, dynamic> json) {
 
     return Track(

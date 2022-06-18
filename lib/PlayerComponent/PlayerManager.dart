@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:just_audio/just_audio.dart';
 
 class PlayerManager {
-  // static const url = 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3';
-  // static const url = 'https://video-ssl.itunes.apple.com/itunes-assets/Video118/v4/be/9a/18/be9a18de-2e1f-4917-6973-ab4035978aa1/mzvf_5776119663544478994.640x352.h264lc.U.p.m4v';
+
+  //class from just_audio package
   late AudioPlayer _audioPlayer;
 
   PlayerManager(String url) {
@@ -26,6 +26,7 @@ class PlayerManager {
   void _init(String url) async {
     _audioPlayer = AudioPlayer();
     await _audioPlayer.setUrl(url);
+    //listener to the audio player state and change button play/pause
     _audioPlayer.playerStateStream.listen((playerState) {
       final isPlaying = playerState.playing;
       final processingState = playerState.processingState;
@@ -41,6 +42,7 @@ class PlayerManager {
         _audioPlayer.pause();
       }
     });
+    //listener to the audio player progress bar's slider handle
     _audioPlayer.positionStream.listen((position) {
       final oldState = progressNotifier.value;
       progressNotifier.value = ProgressBarState(
@@ -49,6 +51,7 @@ class PlayerManager {
         total: oldState.total,
       );
     });
+    //listener to the audio player progress bar's song buffering
     _audioPlayer.bufferedPositionStream.listen((bufferedPosition) {
       final oldState = progressNotifier.value;
       progressNotifier.value = ProgressBarState(
@@ -57,6 +60,7 @@ class PlayerManager {
         total: oldState.total,
       );
     });
+    //listener to the audio player's current played track duration in minute:second
     _audioPlayer.durationStream.listen((totalDuration) {
       final oldState = progressNotifier.value;
       progressNotifier.value = ProgressBarState(

@@ -1,5 +1,3 @@
-import 'package:apple_player/PlayerComponent/AudioPlayerComponent.dart';
-import 'package:apple_player/SearchBar.dart';
 import 'package:apple_player/TrackList.dart';
 import 'package:flutter/material.dart';
 
